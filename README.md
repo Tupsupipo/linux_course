@@ -7,3 +7,5 @@ This project is built using a LEMP stack (Linux, Nginx, MySQL, and Python). The 
 >lemp-app                   go to PATH: /etc/nginx/sites-available/lemp-app
 
 >lemp-app.service           go to PATH: /etc/systemd/system/lemp-app.service
+
+
