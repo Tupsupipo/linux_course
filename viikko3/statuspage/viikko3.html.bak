@@ -35,6 +35,19 @@
       padding: 10px;
     }
     h1, h2 { color: #f0f2f3; }
+    .progress {
+      width: 100%;
+      background: #333;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      background: #3ab855;
+      color: white;
+      padding: 4px;
+      text-align: center;
+    }
     .textbox {
       background: rgba(8, 45, 75, 0.85);
       color: #f0f2f3;
@@ -83,24 +96,32 @@
     <table>
   <tbody>
     <tr>
-      <td>Site information updated</td>
-      <td>12.11.2026 15:50 EET</td>
+      <td>Server status updated</td>
+      <td>12.11.2026 17:01 EET</td>
     </tr>
     <tr>
       <td>Server uptime</td>
-      <td>up 6 days, 2 hours, 8 minutes</td>
+      <td>up 8 minutes</td>
     </tr>
-    <tr>
+  <tr>
       <td>Memory usage</td>
-      <td>2.5Gi / 7.6Gi</td>
+      <td><div class="progress">
+      <div class="progress-fill" style="width: 13%">
+      13%
+      </div>
+    </div></td>
     </tr>
     <tr>
       <td>Disk usage</td>
-      <td>6.8G / 77G  9% of diskspace used</td>
+      <td><div class="progress">
+      <div class="progress-fill" style="width: 9%">
+      9%
+      </div>
+    </div></td>
     </tr>
     <tr>
       <td>Disk health</td>
-      <td><span style='color: #ff0000; font-weight: bold;'>WARNING!</span>: Disk usage is above <span style='color: #00ff00; font-weight: bold;'>80</span>%.</td>
+      <td><span style='color: #00ff00; font-weight: bold;'>OK</span>: Disk usage is below <span style='color: #00ff00; font-weight: bold;'>80</span>%.</td>
     </tr>
   </tbody>
 </table>
@@ -109,7 +130,7 @@
 </div>
   <div class="hyperbox">
     <p>Links:</p>
-    <p><a href="https://github.com/Tupsupipo">    Project sourcecodes on GitHub</a></p>
+    <p><a href="https://github.com/Tupsupipo/linux_course/tree/main/viikko3">    Project sourcecodes on GitHub</a></p>
     <p><a href="http://195.148.21.118">     Back to the week one</a></p>
     <p><a href="http://195.148.21.118/viikko2">     Back to the week two</a></p>
 </div>

@@ -3,21 +3,23 @@
 set -euo pipefail
 
 HTMLFILE="/home/ubuntu/projects/linux_course/viikko3/statuspage/viikko3.html"
-DISK_STATE=""
+DISK_HEALTH=""
+DISK_PERCENT=$(df --output=pcent / | tail -1 | tr -dc '0-9')
+MEM_USAGE=$(free | awk '/Mem:/ {printf "%.0f", $3/$2*100}')
 
 if [[ -f "$HTMLFILE" ]]; then
   cp -- "$HTMLFILE" "$HTMLFILE.bak"
 fi
 
-disk_usage() {
+disk_status() {
   if df -h / | awk 'NR==2{print $5}' | grep -qE '^[8-9][0-9]%|^100%'; then
-    DISK_STATE="<span style='color: #ff0000; font-weight: bold;'>WARNING!</span>: Disk usage is above <span style='color: #ff0000; font-weight: bold;'>80</span>%."
+    DISK_HEALTH="<span style='color: #ff0000; font-weight: bold;'>WARNING!</span>: Disk usage is above <span style='color: #ff0000; font-weight: bold;'>80</span>%."
   else
-   DISK_STATE="<span style='color: #00ff00; font-weight: bold;'>OK</span>: Disk usage is below <span style='color: #00ff00; font-weight: bold;'>80</span>%."
+    DISK_HEALTH="<span style='color: #00ff00; font-weight: bold;'>OK</span>: Disk usage is below <span style='color: #00ff00; font-weight: bold;'>80</span>%."
   fi
 }
 
-disk_usage
+disk_status
 
 cat > "$HTMLFILE" <<EOF
 <!DOCTYPE html>
@@ -57,6 +59,19 @@ cat > "$HTMLFILE" <<EOF
       padding: 10px;
     }
     h1, h2 { color: #f0f2f3; }
+    .progress {
+      width: 100%;
+      background: #333;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      background: #3ab855;
+      color: white;
+      padding: 4px;
+      text-align: center;
+    }
     .textbox {
       background: rgba(8, 45, 75, 0.85);
       color: #f0f2f3;
@@ -105,24 +120,32 @@ cat > "$HTMLFILE" <<EOF
     <table>
   <tbody>
     <tr>
-      <td>Site information updated</td>
+      <td>Server status updated</td>
       <td>$(date '+%d.%m.%Y %H:%M %Z')</td>
     </tr>
     <tr>
       <td>Server uptime</td>
       <td>$(uptime -p)</td>
     </tr>
-    <tr>
+  <tr>
       <td>Memory usage</td>
-      <td>$(free -h | awk 'NR==2{print $3 " / " $2}')</td>
+      <td><div class="progress">
+      <div class="progress-fill" style="width: ${MEM_USAGE}%">
+      ${MEM_USAGE}%
+      </div>
+    </div></td>
     </tr>
     <tr>
       <td>Disk usage</td>
-      <td>$(df -h / | awk 'NR==2{print $3 " / " $2 "  " $5 " of diskspace used"}')</td>
+      <td><div class="progress">
+      <div class="progress-fill" style="width: ${DISK_PERCENT}%">
+      ${DISK_PERCENT}%
+      </div>
+    </div></td>
     </tr>
     <tr>
       <td>Disk health</td>
-      <td>$DISK_STATE</td>
+      <td>$DISK_HEALTH</td>
     </tr>
   </tbody>
 </table>
@@ -131,7 +154,7 @@ cat > "$HTMLFILE" <<EOF
 </div>
   <div class="hyperbox">
     <p>Links:</p>
-    <p><a href="https://github.com/Tupsupipo">    Project sourcecodes on GitHub</a></p>
+    <p><a href="https://github.com/Tupsupipo/linux_course/tree/main/viikko3">    Project sourcecodes on GitHub</a></p>
     <p><a href="http://195.148.21.118">     Back to the week one</a></p>
     <p><a href="http://195.148.21.118/viikko2">     Back to the week two</a></p>
 </div>
