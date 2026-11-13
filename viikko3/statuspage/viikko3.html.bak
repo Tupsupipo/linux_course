@@ -29,6 +29,14 @@
       width: 100%;
     }
 
+    code {
+    background-color: #1e293b;
+    color: #00ff00;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-family: Consolas, monospace;
+    }
+
     td, th {
       border: 2px solid #91acd3;
       text-align: left;
@@ -97,17 +105,21 @@
   <tbody>
     <tr>
       <td>Server status updated</td>
-      <td>12.11.2026 17:01 EET</td>
+      <td>13.11.2026 11:47 EET</td>
     </tr>
     <tr>
       <td>Server uptime</td>
-      <td>up 8 minutes</td>
+      <td>up 18 hours, 54 minutes</td>
+    </tr>
+    <tr>
+      <td>Memory</td>
+      <td>Used: 2.3Gi | Available: 5.2Gi | Total: 7.6Gi </td>
     </tr>
   <tr>
       <td>Memory usage</td>
       <td><div class="progress">
-      <div class="progress-fill" style="width: 13%">
-      13%
+      <div class="progress-fill" style="width: 31%">
+      31%
       </div>
     </div></td>
     </tr>
@@ -125,7 +137,23 @@
     </tr>
   </tbody>
 </table>
-    
+  <h2>For this project I used following commands:</h2>
+<ul>
+  <li><code>date '+%d.%m.%Y %H:%M %Z'</code> : To get the current date, time and timezone </li>
+  <li><code>uptime -p</code> : To get the uptime of the server </li>
+  <li><code>free -h | awk '/Mem:/ {print "Used: " $3 " | Available: " $7 " | Total: " $2}'</code> : To get the used, available and total memory </li>
+  <li><code>free | awk '/Mem:/ {printf "%.0f", $3/$2*100}'</code> : To get the percentage of used memory </li>
+  <li><code>df --output=pcent / | tail -1 | tr -dc '0-9'</code> : To get the percentage of used disk space </li>
+</ul>
+  <p>This script generates a status page in HTML format that displays the server's current status, including the date, time, timezone, uptime, memory usage, disk usage and disk health. </p>
+  <p></p>
+  <p>The script checks if the disk usage exceeds a certain threshold (80%) and displays a warning message if it does. Otherwise, it shows that the disk usage is OK.</p>
+  <p>Disk space warning logic is implemented in the <code>disk_status</code> function. It checks the disk usage percentage and sets the <code>DISK_HEALTH</code> variable accordingly.</p>
+  <p></p>
+  
+  <p>Script is timed to run every minute using a cron job, ensuring that the status page is always up-to-date.</p>
+   <p></p>
+  <p>All tests done were <strong>successful</strong> and the script works as <strong>expected</strong>. Bash syntax is correct. Script is working as expected after reboot. Disk space warning logic is working correctly. </p>
 </div>
 </div>
   <div class="hyperbox">
