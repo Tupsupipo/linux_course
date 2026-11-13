@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>csc-linux</title>
+  <title>Week3: Server Status - csc-linux</title>
   <style>
     html {
       min-height: 100vh;
@@ -99,27 +99,27 @@
   <div class="textbox">
     <h1>Week 3: Server status.</h1>
     <h1>Welcome to csc-linux server</h1>
-    <h3>Work in progress...</h3>
+    <h3>Server status:</h3>
 
     <table>
   <tbody>
     <tr>
       <td>Server status updated</td>
-      <td>13.11.2026 11:47 EET</td>
+      <td>13.11.2026 12:08 EET</td>
     </tr>
     <tr>
       <td>Server uptime</td>
-      <td>up 18 hours, 54 minutes</td>
+      <td>up 19 hours, 15 minutes</td>
     </tr>
     <tr>
       <td>Memory</td>
-      <td>Used: 2.3Gi | Available: 5.2Gi | Total: 7.6Gi </td>
+      <td>Used: 2.0Gi | Available: 5.6Gi | Total: 7.6Gi </td>
     </tr>
   <tr>
       <td>Memory usage</td>
       <td><div class="progress">
-      <div class="progress-fill" style="width: 31%">
-      31%
+      <div class="progress-fill" style="width: 26%">
+      26%
       </div>
     </div></td>
     </tr>
@@ -146,14 +146,18 @@
   <li><code>df --output=pcent / | tail -1 | tr -dc '0-9'</code> : To get the percentage of used disk space </li>
 </ul>
   <p>This script generates a status page in HTML format that displays the server's current status, including the date, time, timezone, uptime, memory usage, disk usage and disk health. </p>
-  <p></p>
+  <h3></h3>
   <p>The script checks if the disk usage exceeds a certain threshold (80%) and displays a warning message if it does. Otherwise, it shows that the disk usage is OK.</p>
-  <p>Disk space warning logic is implemented in the <code>disk_status</code> function. It checks the disk usage percentage and sets the <code>DISK_HEALTH</code> variable accordingly.</p>
-  <p></p>
-  
-  <p>Script is timed to run every minute using a cron job, ensuring that the status page is always up-to-date.</p>
-   <p></p>
-  <p>All tests done were <strong>successful</strong> and the script works as <strong>expected</strong>. Bash syntax is correct. Script is working as expected after reboot. Disk space warning logic is working correctly. </p>
+  <p>Disk space warning logic is implemented in the <code>disk_status</code> function. It checks the disk usage percentage and sets the <code>DISK_HEALTH</code> variable accordingly.
+  Check how its done from my <a href="https://github.com/Tupsupipo/linux_course/blob/main/viikko3/status.sh"> GitHub</a> page.</p>
+  <h3></h3>
+  <p>Script is timed to run every minute using a <strong>cron</strong> job, ensuring that the status page is always up-to-date.</p>
+  <h3></h3>
+  <p>All tests done were <strong>successful</strong> and the script works as <strong>expected</strong>. Bash syntax is correct. Script is working as expected after reboot. 
+  Disk space warning logic is working correctly. </p>
+  <h3></h3>
+  <p>I learned how to use bash scripting to automate tasks and generate dynamic content for a web page. I also learned how to use cron jobs to schedule tasks and keep the 
+  status page up-to-date.</p>
 </div>
 </div>
   <div class="hyperbox">

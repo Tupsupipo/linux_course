@@ -27,7 +27,7 @@ cat > "$HTMLFILE" <<EOF
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>$(hostname)</title>
+  <title>Week3: Server Status - $(hostname)</title>
   <style>
     html {
       min-height: 100vh;
@@ -123,7 +123,7 @@ cat > "$HTMLFILE" <<EOF
   <div class="textbox">
     <h1>Week 3: Server status.</h1>
     <h1>Welcome to csc-linux server</h1>
-    <h3>Work in progress...</h3>
+    <h3>Server status:</h3>
 
     <table>
   <tbody>
@@ -170,14 +170,18 @@ cat > "$HTMLFILE" <<EOF
   <li><code>df --output=pcent / | tail -1 | tr -dc '0-9'</code> : To get the percentage of used disk space </li>
 </ul>
   <p>This script generates a status page in HTML format that displays the server's current status, including the date, time, timezone, uptime, memory usage, disk usage and disk health. </p>
-  <p></p>
+  <h3></h3>
   <p>The script checks if the disk usage exceeds a certain threshold (80%) and displays a warning message if it does. Otherwise, it shows that the disk usage is OK.</p>
-  <p>Disk space warning logic is implemented in the <code>disk_status</code> function. It checks the disk usage percentage and sets the <code>DISK_HEALTH</code> variable accordingly.</p>
-  <p></p>
-  
+  <p>Disk space warning logic is implemented in the <code>disk_status</code> function. It checks the disk usage percentage and sets the <code>DISK_HEALTH</code> variable accordingly.
+  Check how its done from my <a href="https://github.com/Tupsupipo/linux_course/blob/main/viikko3/status.sh"> GitHub</a> page.</p>
+  <h3></h3>
   <p>Script is timed to run every minute using a <strong>cron</strong> job, ensuring that the status page is always up-to-date.</p>
-   <p></p>
-  <p>All tests done were <strong>successful</strong> and the script works as <strong>expected</strong>. Bash syntax is correct. Script is working as expected after reboot. Disk space warning logic is working correctly. </p>
+  <h3></h3>
+  <p>All tests done were <strong>successful</strong> and the script works as <strong>expected</strong>. Bash syntax is correct. Script is working as expected after reboot. 
+  Disk space warning logic is working correctly. </p>
+  <h3></h3>
+  <p>I learned how to use bash scripting to automate tasks and generate dynamic content for a web page. I also learned how to use cron jobs to schedule tasks and keep the 
+  status page up-to-date.</p>
 </div>
 </div>
   <div class="hyperbox">
