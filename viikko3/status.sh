@@ -161,25 +161,86 @@ cat > "$HTMLFILE" <<EOF
     </tr>
   </tbody>
 </table>
+</div>
+<div class="textbox">
   <h2>For this project I used following commands:</h2>
 <ul>
   <li><code>date '+%d.%m.%Y %H:%M %Z'</code> : To get the current date, time and timezone </li>
-  <li><code>uptime -p</code> : To get the uptime of the server </li>
-  <li><code>free -h | awk '/Mem:/ {print "Used: " \$3 " | Available: " \$7 " | Total: " \$2}'</code> : To get the used, available and total memory </li>
-  <li><code>free | awk '/Mem:/ {printf "%.0f", \$3/\$2*100}'</code> : To get the percentage of used memory </li>
-  <li><code>df --output=pcent / | tail -1 | tr -dc '0-9'</code> : To get the percentage of used disk space </li>
+  <li><code>uptime -p</code> : To get the uptime of the server in "pretty" format </li>
+  <li><code>free -h | awk '/Mem:/ {print "Used: " \$3 " | Available: " \$7 " | Total: " \$2}'</code> : To get the used, available and total memory. 
+  Pipe them to awk which reads info from the line with memory information </li>
+  <li><code>free | awk '/Mem:/ {printf "%.0f", \$3/\$2*100}'</code> : Use free with piping to awk to get the percentage of used memory </li>
+  <li><code>df --output=pcent / | tail -1 | tr -dc '0-9'</code> : To get the percentage of used disk space on root filesystem, 
+  select only the last line and remove all non-numeric characters </li>
 </ul>
-  <p>This script generates a status page in HTML format that displays the server's current status, including the date, time, timezone, uptime, memory usage, disk usage and disk health. </p>
-  <h3></h3>
-  <p>The script checks if the disk usage exceeds a certain threshold (80%) and displays a warning message if it does. Otherwise, it shows that the disk usage is OK.</p>
+</div>
+<div class="textbox">
+  <h2>How the script works?</h2>
+  <p>This script generates a status page in HTML format that displays the server's current status, including the date, time, timezone, uptime, memory usage, disk usage and disk health.
+  It collects server information using Linux commands and stores the results in Bash variables through command substitution.</p>
+  <p>There is also a function that checks if the disk usage exceeds a certain threshold (80%) and displays a warning message if it does. Otherwise, it shows that the disk usage is OK.</p>
   <p>Disk space warning logic is implemented in the <code>disk_status</code> function. It checks the disk usage percentage and sets the <code>DISK_HEALTH</code> variable accordingly.
   Check how its done from my <a href="https://github.com/Tupsupipo/linux_course/blob/main/viikko3/status.sh"> GitHub</a> page.</p>
-  <h3></h3>
+</div>
+<div class="textbox">
+  <h2>How the script is scheduled to run?</h2>
   <p>Script is timed to run every minute using a <strong>cron</strong> job, ensuring that the status page is always up-to-date.</p>
-  <h3></h3>
+  <p>To schedule the script to run every minute, I added the following line to the crontab file:</p>
+  <code>* * * * * sudo ./projects/linux_course/viikko3/status.sh</code>
+
+</div>
+<div class="textbox">
+<h2>Testing and validation</h2>
   <p>All tests done were <strong>successful</strong> and the script works as <strong>expected</strong>. Bash syntax is correct. Script is working as expected after reboot. 
   Disk space warning logic is working correctly. </p>
-  <h3></h3>
+          <h2>Test results</h2>
+
+        <h3>Syntax check and manual execution</h3>
+        <p>  <code>bash -n report.sh</code> was passed normally and script executed manually without errors.</p>
+
+        <h3>Disk space status tests</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Test input</th>
+                        <th scope="col">Expected status</th>
+                        <th scope="col">Actual status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>50%</td>
+                        <td><span style='color: #00ff00; font-weight: bold;'>OK</span></td>
+                        <td><span style='color: #00ff00; font-weight: bold;'>OK</span></td>
+                    </tr>
+                    <tr>
+                        <td>80%</td>
+                        <td><span style='color: #ff0000; font-weight: bold;'>WARNING</span></td>
+                        <td><span style='color: #ff0000; font-weight: bold;'>WARNING</span></td>
+                    </tr>
+                    <tr>
+                        <td>90%</td>
+                        <td><span style='color: #ff0000; font-weight: bold;'>WARNING</span></td>
+                        <td><span style='color: #ff0000; font-weight: bold;'>WARNING</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>Automatic updates</h3>
+        <p>first generation time: 14.11.2026 23:39 EET</p>
+        <p>second generation time: 14.11.2026 23:40 EET</p>
+
+        <h3>Reboot test</h3>
+        <p>
+            <p>Evidence: <a href="https://youtu.be/J5dOJ0o13a4"> Video of a reboot test</a></p>
+        </p>
+    </section>
+
+</div>
+<div class="textbox">
+<h2>What I learned from this project?</h2>
   <p>I learned how to use bash scripting to automate tasks and generate dynamic content for a web page. I also learned how to use cron jobs to schedule tasks and keep the 
   status page up-to-date.</p>
 </div>
