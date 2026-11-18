@@ -3,9 +3,12 @@
 set -euo pipefail
 
 HTMLFILE="/home/ubuntu/projects/linux_course/viikko3/statuspage/viikko3.html"
+DATE=$(date '+%d.%m.%Y %H:%M %Z')
+UPTIME=$(uptime -p)
 DISK_HEALTH=""
 DISK_PERCENT=$(df --output=pcent / | tail -1 | tr -dc '0-9')
 MEM_USAGE=$(free | awk '/Mem:/ {printf "%.0f", $3/$2*100}')
+MEM_TOTAL=$(free -h | awk '/Mem:/ {print "Used: " $3 " | Available: " $7 " | Total: " $2}')
 
 if [[ -f "$HTMLFILE" ]]; then
   cp -- "$HTMLFILE" "$HTMLFILE.bak"
@@ -129,15 +132,15 @@ cat > "$HTMLFILE" <<EOF
   <tbody>
     <tr>
       <td>Server status updated</td>
-      <td>$(date '+%d.%m.%Y %H:%M %Z')</td>
+      <td>$DATE</td>
     </tr>
     <tr>
       <td>Server uptime</td>
-      <td>$(uptime -p)</td>
+      <td>$UPTIME</td>
     </tr>
     <tr>
       <td>Memory</td>
-      <td>$(free -h | awk '/Mem:/ {print "Used: " $3 " | Available: " $7 " | Total: " $2}') </td>
+      <td>$MEM_TOTAL</td>
     </tr>
   <tr>
       <td>Memory usage</td>
