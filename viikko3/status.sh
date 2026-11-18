@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-HTMLFILE="/home/ubuntu/projects/linux_course/viikko3/statuspage/viikko3.html"
+HTMLFILE="/var/www/html/viikko3/viikko3.html"
 DATE=$(date '+%d.%m.%Y %H:%M %Z')
 UPTIME=$(uptime -p)
 DISK_HEALTH=""
