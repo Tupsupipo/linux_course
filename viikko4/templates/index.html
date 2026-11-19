@@ -44,7 +44,7 @@
       color: #dfeaf6;
     }
     .hyperbox {
-      background: rgba(90, 98, 110, 0.85);
+      background: rgba(90, 98, 110, 0.7);
       color: #f9fbfc;
       backdrop-filter: blur(5px);
       border-radius: 12px;
@@ -59,7 +59,30 @@
       margin: 0;
       color: hsl(75, 22%, 96%);
     }
-    pre { background: #2c5d85; padding: 16px; overflow-x: auto; }
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    code {
+      background-color: #010813d3;
+      color: #00ff00;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: Consolas, monospace;
+    }
+    pre {       
+      background: rgba(0, 0, 0, 0.6);
+      color: #39b321;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 24px;
+      max-width: 100%;
+      box-sizing: border-box;
+      word-wrap: break-word; 
+      padding: 16px; 
+      overflow-x: auto; 
+    }
   </style>
 </head>
 <body>
@@ -72,6 +95,70 @@
     <h2>There have been <span style="color: #ff0000; font-weight: bold;">{{ result }}</span> visitors on <a href="http://195.148.21.118/viikko2"> <b>week 2 page</b></a></h2>
     <p>The visitor counter is stored in a MySQL database. Whenever the week 2 page is visited or refreshed, the Flask application updates the counter
        by executing SQL queries and displays the current total. Counter values are synchronized between the two sites, but only the week 2 site increments the counter.</p>
+
+    <h3>Create server B by copying server A.</h3>
+      <p>To copy the week 2 server setup, I created a snapshot of the week 2 server and rebuilt it on a new server using CSC's own web interface.</p>
+
+      <h3>Configure hourly website backups from A to B.</h3>    
+      <p>I made a bash script for hourly website backups from A to B. The cron job executes a script that uses rsync to copy the 
+        HTML files from the week 2 server to the new server's /srv/backup/www/$date directory. Script also maintains a log file 
+        of the backup process and keeps only the last 2 backups, deleting older ones. The script is executed every hour using a cron job.</p>
+
+        <h3>Configure continuous MariaDB replication from A to B.</h3>
+      <p>For database I did use MySQL instead of MariaDB(Was familiar with it, and started these task before there was 
+        info on week2, it was a mistake, but lets go with it now and try to adapt). To make synchronization happen i used MySQL's 
+        own tools mysqldump and mysql replication. I made a dedicated replication user and used it exclusively for database 
+        replication. Replication account was granted only the necessary privileges for replication purposes and was restricted 
+        to connections from server A.</p>
+      <p>Application users were restricted to read-only access to the database.</p>
+
+    <h3>Tests of the implementation.</h3>
+    <table>
+  <tbody>
+    <tr>
+      <td>Both pages accessible</td>
+      <td>OK</td>
+    </tr>
+    <tr>
+      <td>Counter updates on A to B ONLY</td>
+      <td>OK</td>
+    </tr>
+    <tr>
+      <td>database replication reports normal operation</td>
+      <td>OK</td>
+    </tr>
+  <tr>
+      <td>at least two scheduled file backups succeed</td>
+      <td>Listed below</td>
+    </tr>
+    <tr>
+      <td>a restored test file matches the original</td>
+      <td>OK</td>
+    </tr>
+    <tr>
+      <td>B’s website, replication and backup schedule continue working after B is rebooted.</td>
+      <td>OK</td>
+    </tr>
+  </tbody>
+</table>
+      <pre> ubuntu@csc-linux-2-0:~$ sudo ls -la /srv/backup/www/
+        total 16
+        drwx------ 4 root root 4096 Nov 19 16:00 .
+        drwx------ 3 root root 4096 Nov 19 12:13 ..
+        drwxr-xr-x 3 root root 4096 Nov 19 12:35 2026-11-19_15-00-01
+        drwxr-xr-x 3 root root 4096 Nov 19 12:35 2026-11-19_16-00-01
+        ubuntu@csc-linux-2-0:~$ cat /var/log/www-sync.log | tail -n 2
+        Backup completed successfully at 2026-11-19 15:00:02 to /srv/backup/www/2026-11-19_15-00-01
+        Backup completed successfully at 2026-11-19 16:00:03 to /srv/backup/www/2026-11-19_16-00-01
+        ubuntu@csc-linux-2-0:~$ sudo ls -la /srv/backup/www/2026-11-19_16-00-01
+        total 128
+        drwxr-xr-x 3 root root   4096 Nov 19 12:35 .
+        drwx------ 4 root root   4096 Nov 19 16:00 ..
+        -rw-r--r-- 1 root root   3968 Nov 18 18:03 index.html
+        -rw-r--r-- 1 root root 111883 Nov 18 13:37 rec.jpg
+        drwxr-xr-x 3 root root   4096 Nov 18 10:21 viikko3
+      </pre>
+    
     <h2>Reboot test</h2>
     <p>Reboot test for server is done. Visitor counters are working correctly.</p>
 </div>

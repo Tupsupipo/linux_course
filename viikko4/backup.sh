@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-BACKUP_SOURCE="ubuntu@192.168.1.13:/var/www/html/"
 DATE=$(date +%Y-%m-%d_%H-%M-%S)
+BACKUP_SOURCE="ubuntu@192.168.1.13:/var/www/html/"
 BACKUP_DIR="/srv/backup/www"
 BACKUP_PATH="${BACKUP_DIR}/${DATE}"
 
@@ -16,5 +16,5 @@ else
     echo "Backup failed at $(date '+%Y-%m-%d %H:%M:%S')" >> /var/log/www-sync.log
 fi
 
-cd "$BACKUP_DIR" || exit 1      #exit 1 varmistaa, ettei seuraava komento ajaudu, jos cd epäonnistuu. set -e ajaa tosin saman asian.
-ls -1dt */ | tail -n +3 | xargs -r rm -rf
+cd "$BACKUP_DIR" || exit 1      # exit 1 varmistaa, ettei seuraava komento ajaudu, jos cd epäonnistuu. set -e ajaa tosin saman asian.
+ls -1dt */ | tail -n +3 | xargs -r rm -rf # säilytetään vain kaksi uusinta varmuuskopiota, vanhemmat poistetaan
