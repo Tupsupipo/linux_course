@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LEMP-app</title>
+  <style>
+    html {
+      min-height: 100vh;
+      background-image: url("static/images/serverbackup.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    body {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      font-family: sans-serif;
+      line-height: 1.6;
+      background: rgba(0, 0, 0, 0);
+      color: #3ab855;
+    }
+    h1, h2 { color: #f0f2f3; }
+    .textbox {
+      background: rgba(8, 45, 75, 0.85);
+      color: #f0f2f3;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 24px;
+      max-width: 100%;
+      box-sizing: border-box;
+      word-wrap: break-word;
+
+    }
+    .textbox h2 {
+      margin: 0 0 10px;
+      color: #f0f2f3;
+    }
+    .textbox p {
+      margin: 0;
+      color: #dfeaf6;
+    }
+    .hyperbox {
+      background: rgba(90, 98, 110, 0.85);
+      color: #f9fbfc;
+      backdrop-filter: blur(5px);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 24px;
+      max-width: 100%;
+      box-sizing: border-box;
+      word-wrap: break-word;
+
+    }
+    .hyperbox p {
+      margin: 0;
+      color: hsl(75, 22%, 96%);
+    }
+    pre { background: #2c5d85; padding: 16px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+    
+  <div class="textbox">
+    <h1>Week 4: Replicating week 2's visitor counter</h1>
+    <h3>Welcome to my fourth linux project! This site is running on a clone server of the week 2 setup.</h3>
+    <b>In this project, I have replicated the visitor counter from week 2. This site does not increment the counter, 
+      but simply mirrors the counter value from <a href="http://195.148.21.118/viikko2"> week 2's site</a></b>
+    <h2>There have been <span style="color: #ff0000; font-weight: bold;">{{ result }}</span> visitors on <a href="http://195.148.21.118/viikko2"> <b>week 2 page</b></a></h2>
+    <p>The visitor counter is stored in a MySQL database. Whenever the week 2 page is visited or refreshed, the Flask application updates the counter
+       by executing SQL queries and displays the current total. Counter values are synchronized between the two sites, but only the week 2 site increments the counter.</p>
+    <h2>Reboot test</h2>
+    <p>Reboot test for server is done. Visitor counters are working correctly.</p>
+</div>
+  <div class="hyperbox">
+    <p>Links:</p>
+    <p><a href="https://github.com/Tupsupipo/linux_course/tree/main/viikko4">    Viikko4 on GitHub</a></p>
+    <p><a href="http://195.148.21.118">     Back to the week one</a></p>
+    <p><a href="http://195.148.21.118/viikko2">     Back to the week two</a></p>
+    <p><a href="http://195.148.21.118/viikko3">     Back to the week three</a></p>
+</div>
+</body>
+</html>
