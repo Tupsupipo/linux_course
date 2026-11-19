@@ -1,4 +1,4 @@
 # I used following setting on server B to time the cronjob for hourly run of a backup script to maintain two 
 # backup copies of /var/www/html/
 
-0 * * * * ./home/ubuntu/projects/linux_course/viikko4
+0 * * * * /home/ubuntu/projects/linux_course/viikko4/backup.sh
