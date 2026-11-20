@@ -1,8 +1,11 @@
 # Week 4 on linux course. 
+# 
 # Server backup and database mirroring
 This weeks task was to clone our linux server to another server. On the clone server we were tasked to show a mirror of a week 2 visitor counter. 
 This was done by replicating the database of a counter to the new server and showing the counter from read only database so that week4 site cant increment the counter.
-## Task Requirements:
+
+
+### Task Requirements:
 
     1. Create server B by copying server A.
 

@@ -25,7 +25,7 @@
     }
     h1, h2 { color: #f0f2f3; }
     .textbox {
-      background: rgba(8, 45, 75, 0.85);
+      background: rgba(8, 45, 75, 0.7);
       color: #f0f2f3;
       border-radius: 12px;
       padding: 20px 24px;
@@ -44,7 +44,7 @@
       color: #dfeaf6;
     }
     .hyperbox {
-      background: rgba(90, 98, 110, 0.7);
+      background: rgba(149, 151, 153, 0.486);
       color: #f9fbfc;
       backdrop-filter: blur(5px);
       border-radius: 12px;
@@ -64,6 +64,11 @@
       border-collapse: collapse;
       width: 100%;
     }
+    td, th {
+      border: 2px solid #91acd3;
+      text-align: left;
+      padding: 10px;
+    }
     code {
       background-color: #010813d3;
       color: #00ff00;
@@ -73,7 +78,7 @@
     }
     pre {       
       background: rgba(0, 0, 0, 0.6);
-      color: #39b321;
+      color: #00ff00;
       border-radius: 12px;
       padding: 20px 24px;
       margin-top: 24px;
@@ -90,54 +95,61 @@
   <div class="textbox">
     <h1>Week 4: Replicating week 2's visitor counter</h1>
     <h3>Welcome to my fourth linux project! This site is running on a clone server of the week 2 setup.</h3>
-    <b>In this project, I have replicated the visitor counter from week 2. This site does not increment the counter, 
-      but simply mirrors the counter value from <a href="http://195.148.21.118/viikko2"> week 2's site</a></b>
-    <h2>There have been <span style="color: #ff0000; font-weight: bold;">{{ result }}</span> visitors on <a href="http://195.148.21.118/viikko2"> <b>week 2 page</b></a></h2>
-    <p>The visitor counter is stored in a MySQL database. Whenever the week 2 page is visited or refreshed, the Flask application updates the counter
-       by executing SQL queries and displays the current total. Counter values are synchronized between the two sites, but only the week 2 site increments the counter.</p>
+      <p>In this project, I have replicated the visitor counter from week 2. This site does not increment the counter, 
+        but simply mirrors the counter value from <a href="http://195.148.21.118/viikko2"> week 2's site</a></p>
+    <h2>There have been <span style="color: #ff0000; font-weight: bold;">{{ result }}</span> visitors on <a href="http://195.148.21.118/viikko2"> <b>Server A: Week 2 page</b></a></h2>
+      <p>The visitor counter is stored in a MySQL database. Whenever the week 2 page is visited or refreshed, the Flask application updates the counter
+        by executing SQL queries and displays the current total. Counter values are synchronized between the two sites, but only the server A's week 2 site increments the counter.</p>
 
     <h3>Create server B by copying server A.</h3>
-      <p>To copy the week 2 server setup, I created a snapshot of the week 2 server and rebuilt it on a new server using CSC's own web interface.</p>
+      <p>To copy the week 2 server setup, I created <strong>a snapshot</strong> of the week 2 server and rebuilt it on a new server using CSC's own web interface.</p>
 
-      <h3>Configure hourly website backups from A to B.</h3>    
-      <p>I made a bash script for hourly website backups from A to B. The cron job executes a script that uses rsync to copy the 
-        HTML files from the week 2 server to the new server's /srv/backup/www/$date directory. Script also maintains a log file 
-        of the backup process and keeps only the last 2 backups, deleting older ones. The script is executed every hour using a cron job.</p>
+    <h3>Configure hourly website backups from A to B.</h3>    
+      <p>I made a bash script for hourly website backups from A to B. The cron job executes a script on server B, that uses rsync to copy the 
+        HTML files from the week 2 server(A) to the new server's(B) /srv/backup/www/$date directory. </p>
+      <p></p>Script also maintains a log file of the backup process and keeps only the last <strong>2 backups, deleting older ones.</strong> 
+      The script is executed <strong>every hour using a cron job.</strong></p>
+      <p>I also <strong>successfully recovered</strong> the website from a backup.</p>
 
-        <h3>Configure continuous MariaDB replication from A to B.</h3>
-      <p>For database I did use MySQL instead of MariaDB(Was familiar with it, and started these task before there was 
-        info on week2, it was a mistake, but lets go with it now and try to adapt). To make synchronization happen i used MySQL's 
-        own tools mysqldump and mysql replication. I made a dedicated replication user and used it exclusively for database 
-        replication. Replication account was granted only the necessary privileges for replication purposes and was restricted 
-        to connections from server A.</p>
-      <p>Application users were restricted to read-only access to the database.</p>
+    <h3>Configure continuous MariaDB replication from A to B.</h3>
+      <p>For database I did use MySQL instead of MariaDB (Was familiar with it, and started these task before there was 
+        info on week2, it was maybe a mistake because the guides on the course are made for MariaDB, but lets go with it now and try to adapt). </p>
+      <p></p>To make synchronization happen i used MySQL's own tools mysqldump and mysql replication. I made <strong>a dedicated replication user</strong> and used it exclusively for database 
+        replication. Replication account was granted only the <strong>replication privileges</strong> for replication purposes and was <strong>restricted 
+        to connections from server A.</strong></p>
+      <p>Application users were restricted to <strong>read-only</strong> access to the database.</p>
+    <h3>Why continuous replication does not replace historical backups?</h3>
+      <p>Continuous replication is not same thing as historical backups. If something happens to data on the database on server A, maybe a dataloss or corruption, the changes
+         would be replicated to server B, resulting in the loss of data on both servers. Because of this, it is important to have regular backups to ensure that the data can be 
+         restored in case of accidental deletion or corruption.</p>
+      <p>Replication protects against hardware failures and natural disasters, but it does not protect against human error or application bugs.</p>
 
     <h3>Tests of the implementation.</h3>
-    <table>
+<table>
   <tbody>
     <tr>
       <td>Both pages accessible</td>
-      <td>OK</td>
+      <td><span style='color: #00ff00; font-weight: bold;'>OK</span></td>
     </tr>
     <tr>
       <td>Counter updates on A to B ONLY</td>
-      <td>OK</td>
+      <td><span style='color: #00ff00; font-weight: bold;'>OK</span></td>
     </tr>
     <tr>
-      <td>database replication reports normal operation</td>
-      <td>OK</td>
+      <td>Database replication reports normal operation</td>
+      <td><span style='color: #00ff00; font-weight: bold;'>OK</span></td>
     </tr>
   <tr>
-      <td>at least two scheduled file backups succeed</td>
-      <td>Listed below</td>
+      <td>At least two scheduled file backups succeed</td>
+      <td><span style='color: #00ff00; font-weight: bold;'>OK, output \/</span></td>
     </tr>
     <tr>
-      <td>a restored test file matches the original</td>
-      <td>OK</td>
+      <td>A restored test file matches the original</td>
+      <td><span style='color: #00ff00; font-weight: bold;'>OK</span></td>
     </tr>
     <tr>
       <td>B’s website, replication and backup schedule continue working after B is rebooted.</td>
-      <td>OK</td>
+      <td><span style='color: #00ff00; font-weight: bold;'>OK</span></td>
     </tr>
   </tbody>
 </table>
@@ -158,9 +170,35 @@
         -rw-r--r-- 1 root root 111883 Nov 18 13:37 rec.jpg
         drwxr-xr-x 3 root root   4096 Nov 18 10:21 viikko3
       </pre>
+
+    <h2>A summary of both server's storage layout and backup locations</h2>
+      <p>Server A's website files are located in /var/www/html/ and the database is located in /var/lib/mysql/. </p>
+      <p>Server B's backup copies of the website files are located in /srv/backup/www/$DATE and the database is located in /var/lib/mysql/. 
+        This project is not using database backups, but uses continuous log_bin replication.</p>
+      <p>LEMP application and the website served by it are located in applications own directory in my home directory: ./project/linux_course/viikko$NUMBER</p>
     
-    <h2>Reboot test</h2>
-    <p>Reboot test for server is done. Visitor counters are working correctly.</p>
+    <h2>An explanation of the Linux users, database users, ownership and permissions used</h2>
+    <h3>Linux users:</h3>
+      <p>The website runs through the standard Nginx service account. Administrative tasks are performed using the Ubuntu user with sudo privileges.</p>
+
+    <h3>Database users:</h3>
+      <p>The database is accessed by the root user with sudo privileges. </p>
+      <p>There is an replicator account used for database replication, which has limited privileges only for 
+        replication purposes and can only access the database from the replication source.</p>
+      <p>LEMP application has a user named visitorWatchmen for accessing the database. On server A this user has read and write privileges. On server B this user has only read privileges.</p>
+
+    <h3>Ownership and Permissions:</h3>
+      <p>The website files are owned by the Nginx user and have appropriate permissions for web serving. The database files are owned by the MySQL user and have restricted permissions for security.</p>
+      <p>The backup directories on server B are owned by the root user and have restricted permissions to ensure that only authorized users can access the backups.</p>
+      <p>Backup files were protected with following permissions: </p>
+          <pre>
+            sudo chown -R root:root /srv/backup
+            sudo chmod 700 /srv/backup
+          </pre>
+      <p>      </p>
+      
+    <h2>What i learned?</h2>
+      <p>I learned a lot about the server cloning process. Automating the database replication and backup processes, and about the importance of having regular backups. </p>
 </div>
   <div class="hyperbox">
     <p>Links:</p>
