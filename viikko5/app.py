@@ -15,8 +15,7 @@ OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3.1:8b")
 SYSTEM_PROMPT = os.environ.get(
     "SYSTEM_PROMPT",
-    "Olet ystävällinen avustaja. Vastaa tarkasti ja samalla kielellä kuin käyttäjä. Käytä hyvää kielioppia ja " \
-    "vältä kirjoitusvirheitä. Älä keksi tietoja, joita et tiedä varmasti.",
+    "Olet ystävällinen avustaja. Vastaa tarkasti ja samalla kielellä kuin käyttäjä. Käytä hyvää kielioppia ja vältä kirjoitusvirheitä. Älä keksi tietoja, joita et tiedä varmasti.",
 )
 HISTORY_LIMIT = int(os.environ.get("HISTORY_LIMIT", "10"))
 MAX_MESSAGE_LEN = 2000
