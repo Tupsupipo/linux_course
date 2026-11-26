@@ -8,7 +8,7 @@
 # Skripti on idempotentti: sen voi ajaa uudelleen.
 set -euo pipefail
 
-MODEL="${1:-qwen2.5:7b}"
+MODEL="${1:-llama3.1:8b}"
 DEPLOY_USER="${DEPLOY_USER:-$(whoami)}"
 APP_ROOT=/opt/chatapp
 ENV_DIR=/etc/chatapp
