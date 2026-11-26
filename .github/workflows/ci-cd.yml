@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: requirements*.txt
+          cache-dependency-path: viikko5/requirements*.txt
 
       - name: Asenna riippuvuudet
         run: pip install -r viikko5/requirements-dev.txt
