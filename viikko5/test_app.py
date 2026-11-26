@@ -155,4 +155,3 @@ def test_history_endpoint(client):
     resp = client.get("/api/history/test-session-4")
     assert resp.status_code == 200
     assert resp.get_json() == [{"role": "user", "content": "Moi"}]
-    
