@@ -1,0 +1,6 @@
+# Windowsilla tehdyt tiedostot pysyvät LF-rivinvaihdoissa repossa ja Linux-palvelimella.
+# Ilman tätä bash-skriptit voivat kaatua virheeseen "$'\r': command not found".
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
