@@ -1,11 +1,11 @@
 :root {
   --bg: #f4f5f7;
   --panel: #ffffff;
-  --text: #1d2330;
+  --text: #ffffff;
   --muted: #6b7280;
-  --accent: #2f5bea;
-  --user: #2f5bea;
-  --bot: #eef0f4;
+  --accent: rgba(96, 210, 245, 0.3);
+  --user:  rgba(200, 200, 200, 0.3);
+  --bot:   rgba(0, 0, 0, 0.3);
   --error: #b42318;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
@@ -14,7 +14,7 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg) url("ai2.png") center / cover fixed no-repeat;
   color: var(--text);
   min-height: 100vh;
   display: flex;
@@ -27,8 +27,8 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--panel);
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.06);
+  background: rgba(8, 45, 75, 0.7);
+  box-shadow: 0 0 24px rgba(241, 203, 203, 0.06);
 }
 
 .chat__header {
@@ -37,7 +37,7 @@ body {
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #3c60a8;
 }
 
 .chat__header h1 { margin: 0; font-size: 1.25rem; }
@@ -84,6 +84,8 @@ body {
   border: 1px solid #d1d5db;
   border-radius: 10px;
   font: inherit;
+  background: rgba(200, 200, 200, 0.3);
+  color: #fff;
 }
 
 .chat__form textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
@@ -93,10 +95,10 @@ body {
   border-radius: 10px;
   padding: 0 1.1rem;
   background: var(--accent);
-  color: #fff;
+  color: #ffffff;
   font: inherit;
   cursor: pointer;
 }
 
 .btn:disabled { opacity: 0.5; cursor: wait; }
-.btn--ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 0.45rem 0.9rem; }
+.btn--ghost { background: var(--accent); color: var(--text); border: 1px solid var(--accent); padding: 0.45rem 0.9rem; }

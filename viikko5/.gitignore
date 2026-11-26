@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+REVISION
+.pytest_cache/
+.ruff_cache/
+.vscode/
+.idea/
+# SSH-avaimet eivät kuulu repoon
+cpouta_deploy
+cpouta_deploy.pub
+*.pem
+id_rsa*
+id_ed25519*
