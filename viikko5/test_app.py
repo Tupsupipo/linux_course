@@ -56,6 +56,21 @@ def test_index_without_prefix_works_locally(client):
     assert b'data-base=""' in resp.data
 
 
+def test_documents_page(client):
+    resp = client.get("/documents.html")
+    assert resp.status_code == 200
+    assert b"Chat app" in resp.data
+    assert b"https://github.com/Tupsupipo/linux_course/tree/main/viikko5" in resp.data
+
+
+def test_documents_page_uses_forwarded_prefix(client):
+    resp = client.get("/documents.html", headers={"X-Forwarded-Prefix": "/viikko5"})
+    assert resp.status_code == 200
+    assert b'href="/viikko5/static/style.css' in resp.data
+    assert b'href="/viikko5/"' in resp.data
+
+
+>>>>>>> fb476f1 (addition of documents.html, menu for a chatpage, links, etc. Deploying fingers crossed)
 def test_health(client):
     resp = client.get("/health")
     assert resp.status_code == 200
