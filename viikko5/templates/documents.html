@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documents – LLM-chat</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  
+</head>
+<body class="documents-page">
+  <main class="chat docs-page">
+    <header class="chat__header">
+      <div>
+        <h1>Documents</h1>
+        <p class="chat__meta">Viikko 5 – LLM-chat</p>
+      </div>
+      <a class="btn btn--ghost" href="{{ url_for('index') }}">Takaisin chattiin</a>
+      <a class="btn btn--ghost" href="{{ url_for('health') }}">Health check</a>
+    </header>
+
+    <article class="docs-content">
+      <h2>Chat app</h2>
+      <p>
+        This application is a chat interface built using Flask. Nginx forwards
+        requests to the Flask application, which retrieves responses from an Ollama language model.
+        Chat messages are stored in a MySQL database, allowing the conversation history
+        to be reloaded using the same browser session ID.
+      </p>
+
+
+          <h3> A diagram of the request path: </h3>
+            <div class="diagram">
+              <pre>
+              Web Browser
+                  │
+              HTTP :80
+                  ▼
+              Nginx
+              ├── /viikko2/
+              ├── /viikko3/
+              ├── /viikko4/
+              └── /viikko5/
+                  │
+                  ├── /static/
+                  │      └── Files served directly by Nginx
+                  │
+                  └── unix socket
+                        ▼
+                    Gunicorn + Flask
+                        │
+                        ├── HTTP ──────────▶ Ollama (127.0.0.1:11434)
+                        ▼
+                      MySQL (chatapp database)
+              </pre>
+            </div>
+
+          <h3>Description of the pipeline: what runs on pull requests, what runs on main, and how a deployment is verified?</h3>
+            <p> On pull requests, GitHub Actions installs the dependencies and runs ruff linting and pytest and checks the shell scripts. </p>
+
+            <p> On Push the same checks run first. If they pass,
+                GitHub Actions connects to the server using repository secrets, copies the application files by rsync, and runs the deployment script. The script
+                installs dependencies, applies the database schema, updates and checks the nginx configuration, and then restarts the chat service </p>
+                Deployment is verified by checking that the application is running and responding to requests and its version number matches the expected version. </p>
+
+          <h3> Linux users, database users, file ownership and permissions you used, and where the secrets are stored:</h3>
+            <p> The application runs as the user 'chatapp', which is a system user with no login shell. The application files are owned by 'chatapp' and have 
+                permissions set to "750" for directories and "640" for files.  The database user is also 'chatapp@localhost', and it has access only 
+                to the 'chatapp' database. The app reads its DB connection settings from environment variables. 
+            <p> Secrets, such as database passwords, are stored in a .env file that is readable only by the 'chatapp' user. </p>
+            <p> Secrets used in the deployment process are managed through GitHub Actions secrets.</p>
+
+          <h3> How /viikko5/ was added to Nginx without affecting other sites or pages?</h3>
+            <p> /viikko5/ was added as a snippet to the Nginx configuration file by <code>include snippets/chatapp.conf;</code>.  This is the path to the snippet that is 
+                created by the deployment script. The snippet contains the location block for /viikko5/ and the proxy settings for the Flask application. This way 
+                it does not interfere with other sites or pages served by Nginx. </p>
+
+          <h3> Model choice and the server's memory and disk usage:</h3>
+            <p> I ended up choosing the llama3.1:8b model for its performance and efficiency in handling the chat application. I tested many options and found this model 
+                to be the best balance between performance and resource usage. Other models were considered but did not offer the same level of performance under the 
+                given constraints. </p>
+            <div class="diagram">
+              <pre>
+    <strong>Memory usage with the model loaded:</strong>
+            ubuntu@csc-linux:~$ free -m
+                          total        used        free      shared  buff/cache   available
+            Mem:           15609        6602        1720           7        7629        9007
+            Swap:              0           0           0
+
+    <strong>Disk usage of the server:</strong>
+            ubuntu@csc-linux:~$ df -h /dev/vda1
+                          Filesystem      Size  Used Avail Use% Mounted on
+                          /dev/vda1        77G   30G   48G  39% /
+              </pre>
+            </div>
+
+          <h3> If you completed Week 4: whether the chat database is replicated to server B, and why or why not?</h3>
+            <p> In my replication setup there is no restrictions on the database replication in binlog_do_db or replicate_do_db. I have not set up any restrictions on the replication, so the chat database is 
+                replicated to server B. I might look into setting up restrictions in the future for more granular control. </p> 
+
+          <h3> One problem you solved or one thing you learned:</h3>
+            <p> If you run a install script with out checking it thoroughly you might overwrite your MySQL setup with MariaDB, and ruin few hours of your day.. 8/</p>
+
+      </p><p>
+
+          <h3> Evidence from the server: copy the output of these commands to the documentation and remove any secrets. </h3>
+      <ul>
+            <li>- systemctl status <your-service> and systemctl show <your-service> -p User -p Group</li>
+
+              <div class="diagram">
+                <pre>
+  ubuntu@csc-linux:~$ systemctl status chatapp && systemctl show chatapp -p User -p Group
+  ● chatapp.service - LLM-chat (Flask + Gunicorn)
+      Loaded: loaded (/etc/systemd/system/chatapp.service; enabled; preset: enabled)
+      Active: active (running) since Thu 2026-11-26 17:06:56 EET; 23h ago
+  Invocation: 1523e0fdc19244688104464bed9af89d
+    Main PID: 55266 (gunicorn)
+        Tasks: 5 (limit: 16764)
+      Memory: 73.1M (peak: 74.4M)
+          CPU: 34.325s
+      CGroup: /system.slice/chatapp.service
+              ├─55266 /opt/chatapp/venv/bin/python3 /opt/chatapp/venv/bin/gunicorn --workers 2 --worker-class gthread --threads 8 --timeout 300 --bind unix:/run/chatapp/gunicorn.sock --umask 007 --access-logfile - app:app
+              ├─55274 /opt/chatapp/venv/bin/python3 /opt/chatapp/venv/bin/gunicorn --workers 2 --worker-class gthread --threads 8 --timeout 300 --bind unix:/run/chatapp/gunicorn.sock --umask 007 --access-logfile - app:app
+              └─55275 /opt/chatapp/venv/bin/python3 /opt/chatapp/venv/bin/gunicorn --workers 2 --worker-class gthread --threads 8 --timeout 300 --bind unix:/run/chatapp/gunicorn.sock --umask 007 --access-logfile - app:app
+
+  Nov 26 19:03:00 csc-linux gunicorn[55274]: 80.186.240.231 - - [26/Nov/2026:19:03:00 +0200] "GET / HTTP/1.1" 200 1277 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+  Nov 26 19:03:00 csc-linux gunicorn[55274]: 80.186.240.231 - - [26/Nov/2026:19:03:00 +0200] "GET /api/history/6effe5b215a31e8020c60c878cf8007f HTTP/1.1" 200 3462 "http://195.148.21.118/viikko5/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+  Nov 26 19:03:22 csc-linux gunicorn[55275]: 80.186.240.231 - - [26/Nov/2026:19:03:22 +0200] "POST /api/chat HTTP/1.1" 200 0 "http://195.148.21.118/viikko5/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+  Nov 26 19:03:50 csc-linux gunicorn[55274]: 80.186.240.231 - - [26/Nov/2026:19:03:50 +0200] "POST /api/chat HTTP/1.1" 200 2236 "http://195.148.21.118/viikko5/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+  Nov 26 19:38:29 csc-linux gunicorn[55275]: 80.186.240.231 - - [26/Nov/2026:19:38:29 +0200] "POST /api/chat HTTP/1.1" 200 6921 "http://195.148.21.118/viikko5/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+  Nov 27 08:07:04 csc-linux gunicorn[55275]: 80.186.240.231 - - [27/Nov/2026:08:07:04 +0200] "GET / HTTP/1.1" 200 1277 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+  Nov 27 08:07:04 csc-linux gunicorn[55274]: 80.186.240.231 - - [27/Nov/2026:08:07:04 +0200] "GET /api/history/6effe5b215a31e8020c60c878cf8007f HTTP/1.1" 200 5283 "http://195.148.21.118/viikko5/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+  Nov 27 08:14:55 csc-linux gunicorn[55275]: 80.186.240.231 - - [27/Nov/2026:08:14:55 +0200] "GET /health HTTP/1.1" 200 41 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+  Nov 27 12:47:27 csc-linux gunicorn[55274]: 80.186.240.231 - - [27/Nov/2026:12:47:27 +0200] "POST /api/chat HTTP/1.1" 200 3307 "http://195.148.21.118/viikko5/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+  Nov 27 15:49:07 csc-linux gunicorn[55275]: 80.186.240.231 - - [27/Nov/2026:15:49:07 +0200] "POST /api/chat HTTP/1.1" 200 1753 "http://195.148.21.118/viikko5/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0"
+
+  User=chatapp
+  Group=chatapp                
+                </pre>
+              </div>
+
+            <li>- ls -l of the application directory, the environment file and the socket (if used):</li>     
+
+              <div class="diagram">
+                <pre>
+  ubuntu@csc-linux:~$ ls -l /opt/chatapp/app/
+  total 52
+  -rw-rw-r-- 1 ubuntu ubuntu   41 Nov 26 17:06 REVISION
+  -rw-r--r-- 1 ubuntu ubuntu 4473 Nov 26 17:06 app.py
+  -rw-r--r-- 1 ubuntu ubuntu 1918 Nov 26 17:06 db.py
+  drwxr-xr-x 5 ubuntu ubuntu 4096 Nov 26 17:06 deploy
+  -rw-r--r-- 1 ubuntu ubuntu  149 Nov 26 17:06 pyproject.toml
+  -rw-r--r-- 1 ubuntu ubuntu   39 Nov 26 17:06 requirements-dev.txt
+  -rw-r--r-- 1 ubuntu ubuntu   60 Nov 26 17:06 requirements.txt
+  drwxr-xr-x 2 ubuntu ubuntu 4096 Nov 26 17:06 scripts
+  drwxr-xr-x 2 ubuntu ubuntu 4096 Nov 26 17:06 static
+  drwxr-xr-x 2 ubuntu ubuntu 4096 Nov 26 17:06 templates
+  -rw-r--r-- 1 ubuntu ubuntu 4979 Nov 26 17:06 test_app.py
+
+  ubuntu@csc-linux:~$ ls -l /etc/chatapp/
+  total 4
+  -rw-r----- 1 root chatapp 252 Nov 26 16:42 chatapp.env
+
+  ubuntu@csc-linux:~$ ls -l /run/chatapp/gunicorn.sock
+  srwxrwx--- 1 chatapp chatapp 0 Nov 26 17:06 /run/chatapp/gunicorn.sock                
+                </pre>
+              </div>
+
+            <li> SHOW GRANTS FOR '<app-db-user>'@'localhost';</li>
+
+              <div class="diagram">
+                <pre>
+  mysql> SHOW GRANTS FOR 'chatapp'@'localhost';
+  +----------------------------------------------------------------------------------------------------+
+  | Grants for chatapp@localhost                                                                       |
+  +----------------------------------------------------------------------------------------------------+
+  | GRANT USAGE ON *.* TO `chatapp`@`localhost`                                                        |
+  | GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER ON `chatapp`.* TO `chatapp`@`localhost` |
+  +----------------------------------------------------------------------------------------------------+
+  2 rows in set (0.00 sec)                
+                </pre>
+              </div>
+
+            <li> ollama list, and free -h with the model loaded</li>
+
+              <div class="diagram">
+                <pre>
+ubuntu@csc-linux:~$  ollama list
+NAME               ID              SIZE      MODIFIED
+llama3.1:8b        46e0c10c039e    4.9 GB    24 hours ago
+deepseek-r1:14b    c333b7232bdb    9.0 GB    25 hours ago
+qwen3.5:9b         56671c2ab938    6.6 GB    26 hours ago
+
+ubuntu@csc-linux:~$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       6.5Gi       1.5Gi       7.4Mi       7.6Gi       8.8Gi
+Swap:             0B          0B          0B
+                </pre>
+              </div>
+
+            <li> sudo ss -ltnp showing that the model server and the application server listen only on localhost</li>
+
+              <div class="diagram">
+                <pre>
+ubuntu@csc-linux:~$ sudo ss -ltnp
+State          Recv-Q          Send-Q                   Local Address:Port                    Peer Address:Port         Process
+LISTEN         0               4096                        127.0.0.54:53                           0.0.0.0:*             users:(("systemd-resolve",pid=553,fd=19))
+LISTEN         0               70                           127.0.0.1:33060                        0.0.0.0:*             users:(("mysqld",pid=1162,fd=31))
+LISTEN         0               512                          127.0.0.1:33171                        0.0.0.0:*             users:(("llama-server",pid=103972,fd=3))
+LISTEN         0               128                          127.0.0.1:34153                        0.0.0.0:*             users:(("code-a717861c07",pid=37102,fd=11))
+LISTEN         0               4096                           0.0.0.0:22                           0.0.0.0:*             users:(("sshd",pid=998,fd=3),("systemd",pid=1,fd=233))
+LISTEN         0               511                            0.0.0.0:80                           0.0.0.0:*             users:(("nginx",pid=55131,fd=5),("nginx",pid=55130,fd=5),("nginx",pid=55129,fd=5),("nginx",pid=55128,fd=5),("nginx",pid=55127,fd=5),("nginx",pid=55126,fd=5),("nginx",pid=39510,fd=5))
+LISTEN         0               4096                     127.0.0.53%lo:53                           0.0.0.0:*             users:(("systemd-resolve",pid=553,fd=17))
+LISTEN         0               151                          127.0.0.1:3306                         0.0.0.0:*             users:(("mysqld",pid=1162,fd=33))
+LISTEN         0               4096                         127.0.0.1:11434                        0.0.0.0:*             users:(("ollama",pid=4833,fd=4))
+LISTEN         0               2048                         127.0.0.1:5000                         0.0.0.0:*             users:(("gunicorn",pid=24562,fd=3),("gunicorn",pid=24560,fd=3),("gunicorn",pid=24558,fd=3),("gunicorn",pid=24540,fd=3))
+LISTEN         0               151                       192.168.1.13:3306                         0.0.0.0:*             users:(("mysqld",pid=1162,fd=35))
+LISTEN         0               4096                              [::]:22                              [::]:*             users:(("sshd",pid=998,fd=4),("systemd",pid=1,fd=234))
+LISTEN         0               511                               [::]:80                              [::]:*             users:(("nginx",pid=55131,fd=6),("nginx",pid=55130,fd=6),("nginx",pid=55129,fd=6),("nginx",pid=55128,fd=6),("nginx",pid=55127,fd=6),("nginx",pid=55126,fd=6),("nginx",pid=39510,fd=6))                  
+                </pre>
+              </div>
+            </ul>
+
+    <header class="chat__header">
+      <div>
+        <h1>Documents</h1>
+        <p class="chat__meta">Viikko 5 – LLM-chat</p>
+      </div>
+    </header>
+      <h2>Sourcecode:</h2>
+      <p><a href="https://github.com/Tupsupipo/linux_course/tree/main/viikko5">           Viikko5 on GitHub</a></p>
+      <p><a href="https://github.com/Tupsupipo/linux_course/actions/runs/46020810663">    Link to a failed action</a></p>
+      <p></p>
+        <p>Links:</p>
+        <p><a href="http://195.148.21.118">             Back to the week one</a></p>
+        <p><a href="http://195.148.21.118/viikko2">     Back to the week two</a></p>
+        <p><a href="http://195.148.21.118/viikko3">     Back to the week three</a></p>
+        <p><a href="http://86.50.252.37/viikko4/">      Back to the week four</a></p>
+      
+    </article>
+  </main>
+</body>
+</html>

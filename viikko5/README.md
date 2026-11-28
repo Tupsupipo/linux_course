@@ -217,10 +217,6 @@ sudo nginx -t
 curl -fsS http://127.0.0.1:11434/api/tags
 ```
 
-MariaDB may use `mariadb` instead of `mysql` as its service name. The app logs
-errors to the `chatapp` systemd journal. The deployment script also prints the
-recent service logs if its socket health check fails.
-
 Common issues:
 
 - **Nginx include missing:** Add `include snippets/chatapp.conf;` to the existing
@@ -243,5 +239,4 @@ Common issues:
 - `/viikko5/` — chat interface
 - `/viikko5/documents.html` — project documentation page
 - `/viikko5/health` — deployment revision health check
-- `/viikko5/api/chat` — streamed chat endpoint
-- `/viikko5/api/history/<session_id>` — conversation history endpoint
+
