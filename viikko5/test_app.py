@@ -70,7 +70,6 @@ def test_documents_page_uses_forwarded_prefix(client):
     assert b'href="/viikko5/"' in resp.data
 
 
->>>>>>> fb476f1 (addition of documents.html, menu for a chatpage, links, etc. Deploying fingers crossed)
 def test_health(client):
     resp = client.get("/health")
     assert resp.status_code == 200
