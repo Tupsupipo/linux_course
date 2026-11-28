@@ -6,6 +6,9 @@ const sendBtn = document.getElementById("send");
 const list = document.getElementById("messages");
 const emptyHint = document.getElementById("empty-hint");
 const newChatBtn = document.getElementById("new-chat");
+const linksToggle = document.getElementById("links-toggle");
+const linksPanel = document.getElementById("links-panel");
+const linkMenu = linksToggle.closest(".link-menu");
 
 const STORAGE_KEY = "viikko5_chat_session_id";
 
@@ -132,6 +135,38 @@ newChatBtn.addEventListener("click", () => {
   sessionId = getSessionId(true);
   clearMessages();
   input.focus();
+});
+
+function setLinksOpen(open) {
+  linksToggle.setAttribute("aria-expanded", String(open));
+  linksPanel.hidden = !open;
+}
+
+linksToggle.addEventListener("click", () => {
+  setLinksOpen(linksToggle.getAttribute("aria-expanded") !== "true");
+});
+
+linksToggle.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    setLinksOpen(true);
+    linksPanel.querySelector("a").focus();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && linksToggle.getAttribute("aria-expanded") === "true") {
+    setLinksOpen(false);
+    linksToggle.focus();
+  }
+});
+
+document.addEventListener("click", (event) => {
+  if (!linkMenu.contains(event.target)) setLinksOpen(false);
+});
+
+linkMenu.addEventListener("focusout", (event) => {
+  if (!linkMenu.contains(event.relatedTarget)) setLinksOpen(false);
 });
 
 loadHistory();

@@ -12,9 +12,25 @@
     <header class="chat__header">
       <div>
         <h1>LLM-chat</h1>
-        <p class="chat__meta">Malli: <code>{{ model }}</code> · Nginx → Gunicorn/Flask → Ollama · MariaDB</p>
+        <p class="chat__meta">Malli: <code>{{ model }}</code> · Nginx → Gunicorn/Flask → Ollama · MySQL</p>
       </div>
-      <button type="button" id="new-chat" class="btn btn--ghost">Uusi keskustelu</button>
+      <div class="chat__actions">
+        <button type="button" id="new-chat" class="btn btn--ghost">Uusi keskustelu</button>
+        <nav class="link-menu" aria-label="Hyödylliset linkit">
+          <button type="button" id="links-toggle" class="btn btn--ghost"
+                  aria-expanded="false" aria-controls="links-panel">Linkit</button>
+          <div id="links-panel" class="link-menu__panel" hidden>
+            <ul>
+              <li><a href="http://195.148.21.118/viikko5/documents.html">Documents</a></li>
+              <li><a href="https://github.com/Tupsupipo/linux_course/tree/main/viikko5">GitHub</a></li>
+              <li><a href="http://195.148.21.118">Week one</a></li>
+              <li><a href="http://195.148.21.118/viikko2">Week 2</a></li>
+              <li><a href="http://195.148.21.118/viikko3">Week 3</a></li>
+              <li><a href="http://86.50.252.37/viikko4/">Week 4</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
     </header>
 
     <section id="messages" class="chat__messages" aria-live="polite">

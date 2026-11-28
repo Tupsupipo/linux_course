@@ -45,6 +45,11 @@ def index():
     return render_template("index.html", model=OLLAMA_MODEL)
 
 
+@app.get("/documents.html")
+def documents():
+    return render_template("documents.html")
+
+
 @app.get("/health")
 def health():
     revision_file = Path(__file__).with_name("REVISION")

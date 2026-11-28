@@ -1,5 +1,5 @@
 :root {
-  --bg: #f4f5f7;
+  --bg:   #0c1e2f;
   --panel: #ffffff;
   --text: #ffffff;
   --muted: #6b7280;
@@ -67,6 +67,42 @@ code {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid #3c60a8;
 }
+
+.chat__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.link-menu { position: relative; }
+
+.link-menu__panel {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 12rem;
+  padding: 0.35rem;
+  border: 1px solid rgba(96, 210, 245, 0.5);
+  border-radius: 10px;
+  background: rgba(8, 45, 75, 0.97);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+}
+
+.link-menu__panel[hidden] { display: none; }
+.link-menu__panel ul { margin: 0; padding: 0; list-style: none; }
+.link-menu__panel a {
+  display: block;
+  padding: 0.55rem 0.7rem;
+  border-radius: 7px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.link-menu__panel a:hover,
+.link-menu__panel a:focus-visible { background: var(--accent); }
+.btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
 .chat__header h1 { margin: 0; font-size: 1.25rem; }
 .chat__meta { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.85rem; }
@@ -164,3 +200,8 @@ body.documents-page {
 
 .btn:disabled { opacity: 0.5; cursor: wait; }
 .btn--ghost { background: var(--accent); color: var(--text); border: 1px solid var(--accent); padding: 0.45rem 0.9rem; }
+
+@media (max-width: 520px) {
+  .chat__header { flex-wrap: wrap; }
+  .chat__actions { margin-left: auto; }
+}
